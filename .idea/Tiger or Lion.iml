@@ -4,7 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/DjangoProject" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (DeepLearningProject)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (Tiger or Lion)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

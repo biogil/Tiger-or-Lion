@@ -2,18 +2,18 @@ from datasets.mnist import load_mnist
 from Networks import *
 from nntools import *
 
-(x_train, t_train), (x_test, t_test) = load_mnist(flatten=False, one_hot_label=True)
+(x_train, t_train), (x_test, t_test) = load_data()
 
-batch_size = 100
+batch_size = 50
 train_size = x_train.shape[0]
-epochs = 3
+epochs = 15
 iters_per_epoch = max(int(train_size / batch_size), 1)
 iters_num = iters_per_epoch*epochs
 
 optimizer = Adam()
 
-net = SimpleCNN(input_dim=(1,28,28), conv_param = {'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
-                hidden_size=100, output_size=10, weight_init_std=0.01)
+net = SimpleCNN(input_dim=(3,56,56), conv_param = {'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
+                hidden_size=200, output_size=2, weight_init_std=0.01)
 
 train_loss_list = []
 train_acc_list = []
@@ -38,9 +38,8 @@ for i in range(iters_num):
         x_train_sample, t_train_sample = x_train, t_train
         x_test_sample, t_test_sample = x_test, t_test
 
-        train_acc = net.accuracy(x_train_sample, t_train_sample)
-        test_acc = net.accuracy(x_test_sample, t_test_sample)
-
+        train_acc = net.accuracy(x_train_sample, t_train_sample, batch_size=batch_size)
+        test_acc = net.accuracy(x_test_sample, t_test_sample, batch_size=batch_size)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
 

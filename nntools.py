@@ -1,5 +1,101 @@
 import numpy as np
+from PIL import Image, ImageChops, ImageEnhance
 
+
+def load_data(filename="datasets/", data_num=500):
+    x_train = []
+    t_train = []
+
+    x_test = []
+    t_test = []
+
+    for i in range(data_num):
+        im1 = Image.open(filename + "Lion/" + str(i + 1) + ".png")
+        im2 = Image.open(filename + "Tiger/" + str(i + 1) + ".png")
+
+        if im1.mode == "RGBA":
+            im1 = im1.convert("RGB")
+        if im2.mode == "RGBA":
+            im2 = im2.convert("RGB")
+
+        im1 = im1.resize((56, 56))
+        im2 = im2.resize((56, 56))
+
+        im1_a = np.array(im1)
+        im2_a = np.array(im2)
+
+        if i < data_num * 0.7:
+            x_train.append(im1_a.transpose(2, 1, 0))
+            t_train.append([1, 0])
+            x_train.append(im2_a.transpose(2, 1, 0))
+            t_train.append([0, 1])
+        else:
+            x_test.append(im1_a.transpose(2, 1, 0))
+            t_test.append([1, 0])
+            x_test.append(im2_a.transpose(2, 1, 0))
+            t_test.append([0, 1])
+
+    return (np.array(x_train), np.array(t_train)), (np.array(x_test), np.array(t_test))
+
+
+def image_reversal(img, savefilepath, save_filename):
+    """ 图像翻转"""
+    lr = img.transpose(Image.FLIP_LEFT_RIGHT)  # 左右翻转
+    ud = img.transpose(Image.FLIP_TOP_BOTTOM)  # 上下翻转
+    lr.save(savefilepath + save_filename)
+    ud.save(savefilepath + save_filename)
+
+
+def image_rotation(img, savefilepath, save_filename):
+    """图像旋转"""
+    out1 = img.rotate(40)  # 旋转20度
+    out2 = img.rotate(30)  # 旋转30度
+    out1.save(savefilepath + save_filename)
+    out2.save(savefilepath + save_filename)
+
+
+def image_translation(img, savefilepath, save_filename):
+    """图像平移"""
+    out3 = ImageChops.offset(img, 20, 0)  # 只沿X轴平移
+    out4 = ImageChops.offset(img, 0, 20)  # 只沿y轴平移
+    out3.save(savefilepath + save_filename)
+    out4.save(savefilepath + save_filename)
+
+
+def image_brightness(img, savefilepath, save_filename):
+    """亮度调整"""
+    bri = ImageEnhance.Brightness(img)
+    bri_img1 = bri.enhance(0.8)  # 小于1为减弱
+    bri_img2 = bri.enhance(1.2)  # 大于1为增强
+    bri_img1.save(savefilepath + save_filename)
+    bri_img2.save(savefilepath + save_filename)
+
+
+def image_chroma(img, savefilepath, save_filename):
+    """色度调整"""
+    col = ImageEnhance.Color(img)
+    col_img1 = col.enhance(0.7)  # 色度减弱
+    col_img2 = col.enhance(1.3)  # 色度增强
+    col_img1.save(savefilepath + save_filename)
+    col_img2.save(savefilepath + save_filename)
+
+
+def image_contrast(img, savefilepath, save_filename):
+    """对比度调整"""
+    con = ImageEnhance.Contrast(img)
+    con_img1 = con.enhance(0.7)  # 对比度减弱
+    con_img2 = con.enhance(1.3)  # 对比度增强
+    con_img1.save(savefilepath + save_filename)
+    con_img2.save(savefilepath + save_filename)
+
+
+def image_sharpness(img, savefilepath, save_filename):
+    """锐度调整"""
+    sha = ImageEnhance.Sharpness(img)
+    sha_img1 = sha.enhance(0.5)  # 锐度减弱
+    sha_img2 = sha.enhance(1.5)  # 锐度增强
+    sha_img1.save(savefilepath + save_filename)
+    sha_img2.save(savefilepath + save_filename)
 
 # 激活函数
 def sigmoid(x):

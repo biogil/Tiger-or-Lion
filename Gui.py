@@ -6,8 +6,8 @@ import numpy as np
 from Networks import *
 from PIL import Image
 
-net = SimpleCNN(input_dim=(1, 28, 28), conv_param={'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
-                hidden_size=100, output_size=10, weight_init_std=0.01)
+net = SimpleCNN(input_dim=(3,56,56), conv_param = {'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
+                hidden_size=200, output_size=2, weight_init_std=0.01)
 
 net.load_params()
 
@@ -52,22 +52,27 @@ class ImageViewer(QWidget):
             pixmap = QPixmap(file_name)
 
             im = Image.open(file_name)
+            if im.mode == "RGBA":
+                im = im.convert('RGB')
 
-            gray_im = im.convert("L")
+            im = im.resize((56, 56))
 
-            resize_im = gray_im.resize((28, 28))
+            im_a = np.array(im)
 
-            im_a = np.array(resize_im)
+            im_a = np.expand_dims(im_a, 0)
+            print(im_a.shape)
 
-            im_a = np.expand_dims(np.expand_dims(im_a, 0), 0)
-
-            y = np.argmax(net.predict(im_a))
+            y = np.argmax(net.predict(im_a.transpose(0, 3, 1, 2)))
+            if y == 0:
+                label = '狮子'
+            else:
+                label = '老虎'
 
             # 调整图片大小以适应窗口
             pixmap = pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatio)
             self.label.setPixmap(pixmap)
 
-            self.textLabel.setText(f"Loaded Image: {y}")
+            self.textLabel.setText(f"识别结果为: {label}")
 
 
 if __name__ == '__main__':
